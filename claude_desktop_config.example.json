@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "claude-image-bridge": {
+      "command": "/absolute/path/to/claude-image-bridge/.venv/bin/python",
+      "args": [
+        "/absolute/path/to/claude-image-bridge/bridge.py",
+        "serve"
+      ]
+    }
+  }
+}
+
