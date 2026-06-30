@@ -14,7 +14,7 @@ Anyone can fork, use, modify, redistribute, and submit pull requests. GitHub sti
 
 This project was extracted from a working company Mac setup after fixing a Claude Desktop + DeepSeek image-handling gap. It is intended to be cloned on another machine and inspected by Codex before installation.
 
-Do not blindly copy the company machine's absolute paths. On a new Mac, run the doctor script first and let Codex inspect the local Claude Desktop configuration.
+Do not blindly copy the company machine's absolute paths. On another Mac, assume Claude Desktop may already have existing model/provider and MCP configuration. Run the task file first so Codex audits the local Claude environment, preserves existing entries, and only then installs the bridge after confirmation.
 
 ## Current platform support
 
@@ -43,7 +43,7 @@ The session tools are the important part for pasted screenshots in a multi-turn 
 
 ## macOS quick start
 
-If you are using Codex on another Mac, the easiest path is to ask Codex to follow the repository task file:
+If you are using Codex on another Mac, the easiest path is to ask Codex to follow the repository task file. The task is designed for existing Claude Desktop environments, not only clean installs:
 
 ```text
 请读取 GitHub 远程仓库 https://github.com/spring-arthas/claude-image-bridge，并按照仓库根目录的 TASK_MAC_CLAUDE_DESKTOP_DEEPSEEK_IMAGE_BRIDGE.md 完成任务。

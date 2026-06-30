@@ -1293,7 +1293,9 @@ def install_claude_config() -> Dict[str, Any]:
 
     backup_path = None
     if CLAUDE_CONFIG_PATH.exists():
-        backup_path = CLAUDE_CONFIG_PATH.with_suffix(".json.bak")
+        backup_path = CLAUDE_CONFIG_PATH.with_name(
+            f"{CLAUDE_CONFIG_PATH.name}.bak-{_timestamp_slug()}"
+        )
         backup_path.write_text(CLAUDE_CONFIG_PATH.read_text(encoding="utf-8"), encoding="utf-8")
 
     tmp_path = CLAUDE_CONFIG_PATH.with_suffix(".json.tmp")
