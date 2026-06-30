@@ -56,6 +56,12 @@ cd claude-image-bridge
 bash scripts/doctor_mac.sh
 ```
 
+For a focused existing-environment audit, run:
+
+```bash
+python3 scripts/audit_claude_mac.py
+```
+
 Review the detected Claude Desktop config paths. The bridge supports both:
 
 ```text
@@ -76,6 +82,20 @@ bash scripts/install_mac.sh
 ```
 
 Restart Claude Desktop after installation.
+
+## Clipboard privacy and test behavior
+
+When an image session is active, the bridge can watch the macOS clipboard every 2 seconds and save new clipboard images/files into that local session directory. To disable this background watcher, set this environment variable for the MCP server process:
+
+```bash
+CLAUDE_IMAGE_BRIDGE_DISABLE_CLIPBOARD_WATCH=1
+```
+
+The optional MCP smoke test overwrites the current macOS clipboard with a generated test image. It refuses to run that part unless explicitly allowed:
+
+```bash
+.venv/bin/python mcp_smoke_test.py --allow-clipboard-overwrite
+```
 
 ## Test in Claude Desktop
 

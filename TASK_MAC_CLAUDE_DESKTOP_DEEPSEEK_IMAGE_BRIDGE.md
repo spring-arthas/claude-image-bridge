@@ -87,6 +87,12 @@ ps -ef | rg -i 'Claude|Claude-3p|claude-image-bridge|bridge.py' || true
 ls -ld /Applications/Claude.app 2>/dev/null || true
 ```
 
+Run the repository audit script:
+
+```bash
+python3 scripts/audit_claude_mac.py
+```
+
 Check candidate config files:
 
 ```text
@@ -302,6 +308,12 @@ Check for:
 
 ## Phase 7: Verify screenshot/image workflow
 
+Privacy boundary:
+
+- When an image session is active, the MCP server may watch the macOS clipboard every 2 seconds and save new clipboard images/files into the bridge session directory.
+- To disable this background watcher, set `CLAUDE_IMAGE_BRIDGE_DISABLE_CLIPBOARD_WATCH=1` for the MCP server process.
+- Even with the watcher disabled, explicit tool calls such as `capture_pasted_image` and `analyze_clipboard_image` can still read the current clipboard when invoked.
+
 In Claude Desktop, run:
 
 ```text
@@ -339,7 +351,7 @@ Success means Claude Desktop returns OCR text, summary, or structured UI analysi
 If the user allows clipboard access and local GUI automation, run:
 
 ```bash
-.venv/bin/python mcp_smoke_test.py
+.venv/bin/python mcp_smoke_test.py --allow-clipboard-overwrite
 ```
 
 This test covers:
@@ -352,7 +364,7 @@ This test covers:
 - pasted image capture/list/analyze.
 - JSON Lines MCP framing.
 
-This smoke test may need non-sandbox permissions because it writes to the macOS clipboard.
+This smoke test overwrites the current macOS clipboard with a generated test image and may need non-sandbox permissions.
 
 ## Completion report
 

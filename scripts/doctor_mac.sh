@@ -41,7 +41,8 @@ fi
 echo
 
 echo "== Python import check =="
-python3 - <<'PY'
+if command -v python3 >/dev/null 2>&1; then
+  python3 - <<'PY'
 import sys
 print("python:", sys.executable)
 try:
@@ -50,7 +51,17 @@ try:
 except Exception as exc:
     print("missing: Pillow", exc)
 PY
+else
+  echo "Skipping Python import check: python3 is missing"
+fi
+echo
+
+echo "== existing Claude environment audit =="
+if command -v python3 >/dev/null 2>&1; then
+  python3 "${ROOT}/scripts/audit_claude_mac.py"
+else
+  echo "Skipping Claude environment audit: python3 is missing"
+fi
 echo
 
 echo "Doctor complete. Run scripts/install_mac.sh only after checking the config path above."
-

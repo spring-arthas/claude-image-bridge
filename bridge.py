@@ -40,15 +40,36 @@ MAX_GIF_FRAMES = 20
 PDF_DPI = 200
 MAX_SESSION_IMAGES = 100
 CLIPBOARD_WATCH_INTERVAL_SECONDS = 2.0
-def _resolve_claude_config_path() -> Path:
+
+
+def _claude_config_override() -> Optional[Path]:
     configured = os.environ.get("CLAUDE_IMAGE_BRIDGE_CONFIG") or os.environ.get("CLAUDE_DESKTOP_CONFIG_PATH")
     if configured:
         return Path(configured).expanduser()
+    return None
 
-    candidates = [
+
+def _claude_app_support_candidates() -> List[Path]:
+    return [
         Path.home() / "Library/Application Support/Claude-3p",
         Path.home() / "Library/Application Support/Claude",
     ]
+
+
+def _existing_claude_config_paths() -> List[Path]:
+    return [
+        app_support / "claude_desktop_config.json"
+        for app_support in _claude_app_support_candidates()
+        if (app_support / "claude_desktop_config.json").exists()
+    ]
+
+
+def _resolve_claude_config_path() -> Path:
+    configured = _claude_config_override()
+    if configured:
+        return configured
+
+    candidates = _claude_app_support_candidates()
     for app_support in candidates:
         config_path = app_support / "claude_desktop_config.json"
         if config_path.exists():
@@ -1263,6 +1284,9 @@ def _start_clipboard_watcher() -> None:
     global _CLIPBOARD_WATCHER_STARTED
     if _CLIPBOARD_WATCHER_STARTED:
         return
+    if os.environ.get("CLAUDE_IMAGE_BRIDGE_DISABLE_CLIPBOARD_WATCH", "").lower() in {"1", "true", "yes", "on"}:
+        _debug("clipboard watcher disabled by CLAUDE_IMAGE_BRIDGE_DISABLE_CLIPBOARD_WATCH")
+        return
     _CLIPBOARD_WATCHER_STARTED = True
     thread = threading.Thread(target=_clipboard_watcher_loop, name="clipboard-image-watch", daemon=True)
     thread.start()
@@ -1276,6 +1300,15 @@ def _claude_config_entry() -> Dict[str, Any]:
 
 
 def install_claude_config() -> Dict[str, Any]:
+    if not _claude_config_override():
+        existing_configs = _existing_claude_config_paths()
+        if len(existing_configs) > 1:
+            paths = "\n".join(f"- {path}" for path in existing_configs)
+            raise BridgeError(
+                "Multiple Claude Desktop config files found. Set CLAUDE_IMAGE_BRIDGE_CONFIG "
+                f"to the config file you want to update before installing:\n{paths}"
+            )
+
     CLAUDE_APP_SUPPORT.mkdir(parents=True, exist_ok=True)
     config: Dict[str, Any] = {}
     if CLAUDE_CONFIG_PATH.exists():
@@ -1659,7 +1692,11 @@ def self_test() -> int:
 
 
 def install_and_report() -> int:
-    result = install_claude_config()
+    try:
+        result = install_claude_config()
+    except BridgeError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

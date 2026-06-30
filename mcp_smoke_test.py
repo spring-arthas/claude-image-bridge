@@ -6,10 +6,9 @@ import os
 import subprocess
 import sys
 import base64
+import argparse
 from io import BytesIO
 from pathlib import Path
-
-from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parent
 PYTHON = Path(os.environ.get("PYTHON", sys.executable))
@@ -52,7 +51,26 @@ def assert_tool_success(response, tool_name):
     return json.loads(response["result"]["content"][0]["text"])
 
 
-def main() -> int:
+def clipboard_overwrite_allowed(argv):
+    parser = argparse.ArgumentParser(description="Smoke test claude-image-bridge MCP tools.")
+    parser.add_argument(
+        "--allow-clipboard-overwrite",
+        action="store_true",
+        help="Allow this test to clear and replace the current macOS clipboard with a generated test image.",
+    )
+    args = parser.parse_args(argv)
+    return args.allow_clipboard_overwrite or os.environ.get("CLAUDE_IMAGE_BRIDGE_ALLOW_CLIPBOARD_SMOKE") == "1"
+
+
+def main(argv=None) -> int:
+    if not clipboard_overwrite_allowed(sys.argv[1:] if argv is None else argv):
+        print(
+            "Refusing to run clipboard smoke test because it overwrites the current macOS clipboard. "
+            "Rerun with --allow-clipboard-overwrite or set CLAUDE_IMAGE_BRIDGE_ALLOW_CLIPBOARD_SMOKE=1.",
+            file=sys.stderr,
+        )
+        return 2
+
     proc = subprocess.Popen(
         [str(PYTHON), str(ROOT / "bridge.py"), "serve"],
         stdin=subprocess.PIPE,
@@ -79,6 +97,8 @@ def main() -> int:
         write_message(proc, {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}})
         write_message(proc, {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}})
         tools = read_message(proc)
+
+        from PIL import Image, ImageDraw
 
         image = Image.new("RGB", (640, 180), "white")
         draw = ImageDraw.Draw(image)

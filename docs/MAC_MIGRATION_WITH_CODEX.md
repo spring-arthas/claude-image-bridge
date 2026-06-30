@@ -17,6 +17,12 @@ Use this document on another Mac. The goal is to avoid blindly applying the sour
 bash scripts/doctor_mac.sh
 ```
 
+For a focused audit of existing Claude config and MCP servers, run:
+
+```bash
+python3 scripts/audit_claude_mac.py
+```
+
 3. Check which config exists:
 
 ```text
@@ -61,4 +67,3 @@ Check Claude logs and the generated config. Common causes:
 - Missing Pillow.
 - Swift command unavailable.
 - Config written to `Claude` while the active app uses `Claude-3p`, or the reverse.
-
