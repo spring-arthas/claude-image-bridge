@@ -43,6 +43,12 @@ The session tools are the important part for pasted screenshots in a multi-turn 
 
 ## macOS quick start
 
+If you are using Codex on another Mac, the easiest path is to ask Codex to follow the repository task file:
+
+```text
+请读取 GitHub 远程仓库 https://github.com/spring-arthas/claude-image-bridge，并按照仓库根目录的 TASK_MAC_CLAUDE_DESKTOP_DEEPSEEK_IMAGE_BRIDGE.md 完成任务。
+```
+
 Clone the repository, then run the read-only environment check:
 
 ```bash
@@ -111,6 +117,7 @@ On macOS this is usually under `/private/tmp`.
 
 ## Docs
 
+- `TASK_MAC_CLAUDE_DESKTOP_DEEPSEEK_IMAGE_BRIDGE.md`: step-by-step task file for Codex on another Mac.
 - `docs/IMPLEMENTATION_SUMMARY.md`: what was built and why.
 - `docs/MAC_MIGRATION_WITH_CODEX.md`: recommended task prompt and procedure for another Mac.
 - `docs/WINDOWS_PORTING_NOTES.md`: what must change for Windows support.
