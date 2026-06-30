@@ -4,6 +4,12 @@
 
 It does not make the model natively multimodal. Instead, it reads a local image, clipboard image, screenshot, or PDF, runs local OCR and lightweight UI/text structuring, then returns text that the model can reason about.
 
+## License and contributions
+
+This project is public and open source under the MIT License.
+
+Anyone can fork, use, modify, redistribute, and submit pull requests. GitHub still requires repository write permissions for direct pushes to the main repository, so outside contributors should use forks and pull requests.
+
 ## Why this repository exists
 
 This project was extracted from a working company Mac setup after fixing a Claude Desktop + DeepSeek image-handling gap. It is intended to be cloned on another machine and inspected by Codex before installation.
@@ -108,4 +114,3 @@ On macOS this is usually under `/private/tmp`.
 - `docs/IMPLEMENTATION_SUMMARY.md`: what was built and why.
 - `docs/MAC_MIGRATION_WITH_CODEX.md`: recommended task prompt and procedure for another Mac.
 - `docs/WINDOWS_PORTING_NOTES.md`: what must change for Windows support.
-
